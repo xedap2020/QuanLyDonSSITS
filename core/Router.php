@@ -12,13 +12,36 @@ class Router {
 
     public function direct($uri) {
         $method = $_SERVER['REQUEST_METHOD'];
-        if (!isset($this->routes[$method][$uri])) {
-            http_response_code(404);
-            echo "404 Not Found";
-            exit;
+
+        // 1. Route tĩnh
+        if (isset($this->routes[$method][$uri])) {
+            list($controller, $methodName) = explode('@', $this->routes[$method][$uri]);
+            return (new $controller)->$methodName();
         }
 
-        list($controller, $method) = explode('@', $this->routes[$method][$uri]);
-        (new $controller)->$method();
+        // 2. Route động: /users/edit/2
+        foreach ($this->routes[$method] as $route => $action) {
+            $pattern = preg_replace('/\{[^\/]+\}/', '([^\/]+)', $route);
+            $pattern = "#^$pattern$#";
+
+            if (preg_match($pattern, $uri, $matches)) {
+                array_shift($matches);
+                list($controller, $methodName) = explode('@', $action);
+                return (new $controller)->$methodName(...$matches);
+            }
+        }
+
+        // 3. Nếu có query string (vd: users/edit?id=2)
+        $uriWithoutQuery = explode('?', $uri)[0];
+        if (isset($this->routes[$method][$uriWithoutQuery])) {
+            list($controller, $methodName) = explode('@', $this->routes[$method][$uriWithoutQuery]);
+            parse_str($_SERVER['QUERY_STRING'], $params);
+            return (new $controller)->$methodName(...array_values($params));
+        }
+
+        // 4. Không khớp route nào
+        http_response_code(404);
+        echo "404 Not Found";
+        exit;
     }
 }

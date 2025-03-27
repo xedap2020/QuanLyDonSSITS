@@ -36,14 +36,23 @@ class AuthController {
             return;
         }
 
+        // Kiểm tra đủ dữ liệu user_type và department_id
+        if (!isset($user['user_type']) || !isset($user['department_id'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Tài khoản chưa được cấu hình đầy đủ thông tin.'
+            ]);
+            return;
+        }
+
         $_SESSION['user'] = $user;
         echo json_encode(['success' => true]);
     }
 
     public function logout() {
         session_start();
-        session_destroy(); // Xóa toàn bộ session
-        header("Location: /approval_system/public/login"); // Chuyển về màn Login
+        session_destroy();
+        header("Location: /approval_system/public/login");
         exit;
     }
 }
