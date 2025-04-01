@@ -30,7 +30,7 @@
 
         .user-label {
             width: 111px;
-            height: 22px;
+            height: 22px; 
             position: absolute;
             top: 112px;
             left: 314px;
@@ -426,15 +426,20 @@
     </div>
 
     <div class="user-label">Mã/Tên user</div>
-    <input type="text" class="user-input" placeholder="Value">
-
-    <button class="search-button">Tìm kiếm</button>
+   
+    <form method="GET" action="/approval_system/public/users">
+        <input type="text" class="user-input" name="search" placeholder="Value" value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+        <button class="search-button" type="submit">Tìm kiếm</button>
+    </form>
 
     <form action="/approval_system/public/users/create" method="get">
         <button type="submit" class="add-button">Thêm mới</button>
     </form>
     
-    <button class="delete-multiple-button">Xóa nhiều</button>
+    <form id="delete-multiple-form" action="/approval_system/public/users/delete-multiple" method="post" style="display:inline;">
+        <input type="hidden" name="ids[]" id="selected-user-ids">
+        <button type="button" class="delete-multiple-button">Xóa nhiều</button>
+    </form>
    
     <!-- Container của bảng -->
     <div class="table-container">
@@ -544,45 +549,127 @@
             </tr>
         </table>
     </div>
-    
+
+    <?php include_once __DIR__ . '/../components/popup_confirm.php'; ?>
+
     <script>
-        // Lấy checkbox đầu tiên (selectAll) và tất cả các checkbox trong bảng
+        // ========== Checkbox "Chọn tất cả" ==========
         const selectAllCheckbox = document.getElementById('selectAll');
         const userCheckboxes = document.querySelectorAll('.user-checkbox');
 
-        // Khi checkbox đầu tiên (selectAll) thay đổi
-        selectAllCheckbox.addEventListener('change', function() {
-            // Nếu checkbox đầu tiên được chọn, chọn tất cả checkbox trong các hàng
-            userCheckboxes.forEach(checkbox => {
-                checkbox.checked = selectAllCheckbox.checked;
-            });
+        selectAllCheckbox?.addEventListener('change', function () {
+            userCheckboxes.forEach(checkbox => checkbox.checked = this.checked);
         });
 
-        // Khi bất kỳ checkbox trong các hàng thay đổi, kiểm tra lại xem có tất cả được chọn không
         userCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                // Kiểm tra xem có tất cả checkbox trong các hàng được chọn không
-                const allChecked = Array.from(userCheckboxes).every(checkbox => checkbox.checked);
+            checkbox.addEventListener('change', function () {
+                const allChecked = Array.from(userCheckboxes).every(cb => cb.checked);
                 selectAllCheckbox.checked = allChecked;
             });
         });
 
+        // ========== Phân trang ==========
         function changePage(page) {
             const url = new URL(window.location.href);
             url.searchParams.set('page', page);
             window.location.href = url.toString();
         }
 
+        // ========== Ẩn nút cho User thường ==========
         const currentUserType = "<?= $_SESSION['user']['user_type'] ?>";
         if (currentUserType === 'user') {
             document.querySelector('.add-button')?.remove();
             document.querySelector('.delete-multiple-button')?.remove();
         }
+        
+        // ========== Xử lý ô tìm kiếm ==========
+        const searchInput = document.querySelector('.user-input');
+        const searchForm = searchInput?.closest('form');
+        let previousValue = searchInput?.value || '';
+
+        searchInput?.addEventListener('input', function () {
+            const currentValue = this.value.trim();
+            if (previousValue.length > 0 && currentValue.length === 0) {
+                localStorage.setItem('refocusSearch', 'true');
+                searchForm.submit();
+            }
+            previousValue = currentValue;
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('refocusSearch') === 'true') {
+                searchInput?.focus();
+                localStorage.removeItem('refocusSearch');
+            }
+        });
+
+        document.querySelectorAll('.delete-button').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const form = this.closest('form');
+                const popup = document.getElementById('popup-confirm-overlay');
+                const okBtn = document.getElementById('popup-ok');
+                const cancelBtn = document.getElementById('popup-cancel');
+
+                popup.style.display = 'flex';
+                document.getElementById('popup-message').textContent = 'Bạn có chắc chắn muốn xóa người dùng này?';
+
+                okBtn.onclick = () => {
+                    popup.style.display = 'none';
+                    form.submit(); // gửi form xóa
+                };
+
+                cancelBtn.onclick = () => {
+                    popup.style.display = 'none';
+                };
+            });
+        });
+
+        const deleteManyBtn = document.querySelector('.delete-multiple-button');
+        const checkboxes = document.querySelectorAll('.user-checkbox');
+        const formMulti = document.getElementById('delete-multiple-form');
+        const hiddenInput = document.getElementById('selected-user-ids');
+        const popup = document.getElementById('popup-confirm-overlay');
+        const okBtn = document.getElementById('popup-ok');
+        const cancelBtn = document.getElementById('popup-cancel');
+
+        deleteManyBtn?.addEventListener('click', function () {
+            const selectedIds = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            if (selectedIds.length === 0) {
+                alert('Vui lòng chọn ít nhất một người dùng để xóa.');
+                return;
+            }
+
+            document.getElementById('popup-message').textContent = 'Bạn có chắc chắn muốn xóa các người dùng đã chọn?';
+            popup.style.display = 'flex';
+
+            okBtn.onclick = () => {
+                popup.style.display = 'none';
+
+                // Gắn input hidden động để gửi dữ liệu mảng ids[]
+                selectedIds.forEach(id => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'ids[]';
+                    input.value = id;
+                    formMulti.appendChild(input);
+                });
+
+                formMulti.submit();
+            };
+
+            cancelBtn.onclick = () => {
+                popup.style.display = 'none';
+            };
+        });
 
     </script>
 
 </body>
 </html>
-
 
 
