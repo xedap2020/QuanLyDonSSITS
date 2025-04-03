@@ -1,4 +1,3 @@
-<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -26,7 +25,7 @@
 
         .content {
             margin-left: 300px;
-            margin-top: -10px;
+            margin-top: 120px;
             padding: 0 20px;
             flex: 1;
         }

@@ -2,16 +2,20 @@
   <li class="<?= (!isset($_GET['url']) || $_GET['url'] === '' || $_GET['url'] === 'dashboard') ? 'active' : '' ?>">
     <a href="/approval_system/public/dashboard">Dashboard</a>
   </li>
-  <li class="<?= ($_GET['url'] ?? '') === 'users' || ($_GET['url'] ?? '') === 'users/create' ? 'active' : '' ?>">
-      <a href="/approval_system/public/users">Quản lý người dùng</a>
+
+  <li class="<?= isset($_GET['url']) && str_starts_with($_GET['url'], 'users') ? 'active' : '' ?>">
+    <a href="/approval_system/public/users">Quản lý người dùng</a>
   </li>
-  <li class="<?= ($_GET['url'] ?? '') === 'requests' ? 'active' : '' ?>">
+
+  <li class="<?= isset($_GET['url']) && str_starts_with($_GET['url'], 'requests') ? 'active' : '' ?>">
     <a href="/approval_system/public/requests">Quản lý đơn</a>
   </li>
+
   <li>
     <a href="/approval_system/public/logout">Đăng xuất</a>
   </li>
 </ul>
+
 
 <style>
   .sidebar-menu {

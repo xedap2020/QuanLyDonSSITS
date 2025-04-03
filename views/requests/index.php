@@ -19,19 +19,13 @@
         }
 
         .sidebar {
-            width: 269px;
-            height: 1005px;
-            min-width: 112px;
-            max-width: 280px;
-            position: fixed;
-            top: 76px;
-            left: 0;
-            background: rgba(255, 255, 255, 1);
+            width: 269px; height: 100%;
+            min-width: 112px; max-width: 280px;
+            position: fixed; top: 76px; left: 0;
+            background: #FFFFFF;
             border-radius: 4px;
-            padding-top: 8px;
-            padding-bottom: 8px;
-            box-shadow: 0px 2px 6px 2px rgba(0, 0, 0, 0.15), 
-                        0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+            padding: 8px 0;
+            box-shadow: 0px 2px 6px 2px #00000026, 0px 1px 2px 0px #0000004D;
         }
 
         .user-label {
@@ -69,6 +63,7 @@
             font-size: 14px;
             font-family: 'Noto Sans JP', sans-serif;
             outline: none;
+            text-indent: 8px; 
         }
 
         .user-input::placeholder {
@@ -261,7 +256,6 @@
             flex-wrap: nowrap; 
         }
 
-
         .pagination-table {
             width: 100%;
             height: 100%;
@@ -269,12 +263,10 @@
             background: rgba(255, 255, 255, 1); 
         }
 
-
         .pagination-table td {
             text-align: center;
             padding: 4px;
         }
-
 
         .pagination-btn {
             width: 28px;
@@ -288,7 +280,6 @@
             text-align: center;
             cursor: pointer;
         }
-
 
         .previous, .next {
             width: 84px;
@@ -307,12 +298,15 @@
             cursor: default;
         }
 
+        .next:disabled {
+            color: rgba(200, 200, 200, 1);
+            cursor: default;
+        }
 
         .pagination-btn.active {
             background: rgba(0, 0, 0, 1);
             color: white;
         }
-
 
         .pagination-dots {
             font-size: 14px;
@@ -374,9 +368,17 @@
         Tên user/Loại đơn/Nội dung
     </div>
 
+    <script>
+        const CURRENT_USER_TYPE = "<?= $_SESSION['user']['user_type'] ?>";
+    </script>
+
     <input type="text" class="user-input" placeholder="Value">
 
-    <button class="search-button">Tìm kiếm</button>
+    <form method="GET" action="/approval_system/public/requests">
+        <input type="text" name="search" class="user-input" placeholder="Value" value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+        <button type="submit" class="search-button">Tìm kiếm</button>
+    </form>
+
     <button class="add-button">Thêm mới đơn</button>
 
     <div class="table-container">
@@ -393,150 +395,34 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>Xin nghỉ phép</td>
-                    <td>2025-01-02</td>
-                    <td class="status">Đã duyệt</td>
-                    <td>2025-01-03</td>
-                    <td class="status">Xin nghỉ đi đám cưới</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>Xin nghỉ phép</td>
-                    <td>2025-01-02</td>
-                    <td class="status">Đơn mới</td>
-                    <td>2025-01-03</td>
-                    <td class="status">Xin nghỉ đi đám cưới</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>Xin nghỉ phép</td>
-                    <td>2025-01-02</td>
-                    <td class="status">Đã duyệt</td>
-                    <td>2025-01-03</td>
-                    <td class="status">Xin nghỉ đi đám cưới</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>Xin nghỉ phép</td>
-                    <td>2025-01-02</td>
-                    <td class="status">Đã hủy</td>
-                    <td>2025-01-03</td>
-                    <td class="status">Xin nghỉ đi đám cưới</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>Xin nghỉ phép</td>
-                    <td>2025-01-02</td>
-                    <td class="status">Đã hủy</td>
-                    <td>2025-01-03</td>
-                    <td class="status">Xin nghỉ đi đám cưới</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>Xin nghỉ phép</td>
-                    <td>2025-01-02</td>
-                    <td class="status">Đơn mới</td>
-                    <td>2025-01-03</td>
-                    <td class="status">Xin nghỉ đi đám cưới</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>Xin nghỉ phép</td>
-                    <td>2025-01-02</td>
-                    <td class="status">Đã duyệt</td>
-                    <td>2025-01-03</td>
-                    <td class="status">Xin nghỉ đi đám cưới</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>Xin nghỉ phép</td>
-                    <td>2025-01-02</td>
-                    <td class="status">Đã duyệt</td>
-                    <td>2025-01-03</td>
-                    <td class="status">Xin nghỉ đi đám cưới</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>Xin nghỉ phép</td>
-                    <td>2025-01-02</td>
-                    <td class="status">Đã duyệt</td>
-                    <td>2025-01-03</td>
-                    <td class="status">Xin nghỉ đi đám cưới</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>Xin nghỉ phép</td>
-                    <td>2025-01-02</td>
-                    <td class="status">Đã duyệt</td>
-                    <td>2025-01-03</td>
-                    <td class="status">Xin nghỉ đi đám cưới</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>Xin nghỉ phép</td>
-                    <td>2025-01-02</td>
-                    <td class="status">Đã duyệt</td>
-                    <td>2025-01-03</td>
-                    <td class="status">Xin nghỉ đi đám cưới</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>Xin nghỉ phép</td>
-                    <td>2025-01-02</td>
-                    <td class="status">Đã duyệt</td>
-                    <td>2025-01-03</td>
-                    <td class="status">Xin nghỉ đi đám cưới</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>Xin nghỉ phép</td>
-                    <td>2025-01-02</td>
-                    <td class="status">Đã duyệt</td>
-                    <td>2025-01-03</td>
-                    <td class="status">Xin nghỉ đi đám cưới</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>Xin nghỉ phép</td>
-                    <td>2025-01-02</td>
-                    <td class="status">Đã duyệt</td>
-                    <td>2025-01-03</td>
-                    <td class="status">Xin nghỉ đi đám cưới</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>Xin nghỉ phép</td>
-                    <td>2025-01-02</td>
-                    <td class="status">Đã duyệt</td>
-                    <td>2025-01-03</td>
-                    <td class="status">Xin nghỉ đi đám cưới</td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>Xin nghỉ phép</td>
-                    <td>2025-01-02</td>
-                    <td class="status">Đã duyệt</td>
-                    <td>2025-01-03</td>
-                    <td class="status">Xin nghỉ đi đám cưới</td>
-                </tr>
+                <?php foreach ($requests as $index => $request): ?>
+                    <tr data-request-id="<?= $request['id'] ?>">
+                        <td><?= $offset + $index + 1 ?></td>
+                        <td><?= htmlspecialchars($request['user_name']) ?></td>
+                        <td>
+                            <?php
+                                echo match($request['type']) {
+                                    'leave' => 'Xin nghỉ phép',
+                                    'equipment' => 'Mượn thiết bị',
+                                    'schedule_change' => 'Đổi lịch',
+                                    'expense' => 'Hoàn phí',
+                                    default => 'Không rõ'
+                                };
+                            ?>
+                        </td>
+                        <td><?= date('Y-m-d', strtotime($request['created_at'])) ?></td>
+                        <td class="status">
+                            <?= match($request['status']) {
+                                'new' => 'Đơn mới',
+                                'approved' => 'Đã duyệt',
+                                'cancelled' => 'Đã hủy',
+                                default => 'Không rõ'
+                            } ?>
+                        </td>
+                        <td><?= $request['approved_at'] ? date('Y-m-d', strtotime($request['approved_at'])) : '' ?></td>
+                        <td class="status"><?= htmlspecialchars($request['description']) ?></td>
+                    </tr>
+                <?php endforeach; ?>
             </tbody>
         </table>
     </div>
@@ -544,18 +430,43 @@
     <div class="pagination-container">
         <table class="pagination-table">
             <tr>
-                <td><button class="pagination-btn previous" disabled>← Previous</button></td>
-                <td><button class="pagination-btn active">1</button></td>
-                <td><button class="pagination-btn">2</button></td>
-                <td><button class="pagination-btn">3</button></td>
-                <td><span class="pagination-dots">...</span></td>
-                <td><button class="pagination-btn">67</button></td>
-                <td><button class="pagination-btn">68</button></td>
-                <td><button class="pagination-btn next">Next →</button></td>
+                <td>
+                    <button class="pagination-btn previous" <?= $currentPage <= 1 ? 'disabled' : '' ?> onclick="changePage(<?= $currentPage - 1 ?>)">← Previous</button>
+                </td>
+
+                <?php
+                    $visiblePages = 3;
+                    $start = max(1, $currentPage - 1);
+                    $end = min($totalPages, $start + $visiblePages - 1);
+
+                    if ($start > 1) {
+                        echo "<td><button class='pagination-btn' onclick='changePage(1)'>1</button></td>";
+                        if ($start > 2) echo "<td><span class='pagination-dots'>...</span></td>";
+                    }
+
+                    for ($i = $start; $i <= $end; $i++) {
+                        $active = $i == $currentPage ? 'active' : '';
+                        echo "<td><button class='pagination-btn $active' onclick='changePage($i)'>$i</button></td>";
+                    }
+
+                    if ($end < $totalPages) {
+                        if ($end < $totalPages - 1) 
+                            echo "<td><span class='pagination-dots'>...</span></td>";
+                        echo "<td><button class='pagination-btn' onclick='changePage($totalPages)'>$totalPages</button></td>";
+                    }
+                ?>
+
+                <td>
+                    <button class="pagination-btn next" 
+                        <?= ($currentPage >= $totalPages || $totalPages <= 1) ? 'disabled' : '' ?> 
+                        onclick="changePage(<?= $currentPage + 1 ?>)">Next →
+                    </button>
+                </td>
             </tr>
         </table>
     </div>
 
+    <?php include_once __DIR__ . '/../components/popup_cancel.php'; ?>
     <script>
 
         document.addEventListener("DOMContentLoaded", function() {
@@ -578,36 +489,97 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             document.querySelectorAll('.custom-table tbody tr').forEach(row => {
-                let statusCell = row.children[4];
-                let descriptionCell = row.children[6];
+                const statusCell = row.children[4];
+                const descriptionCell = row.children[6];
 
                 if (statusCell.textContent.trim() === 'Đơn mới') {
                     descriptionCell.classList.add('description-cell');
 
-                    let oldContent = descriptionCell.innerHTML;
+                    const oldContent = descriptionCell.innerHTML;
 
-                    // Tạo div chứa 2 button
-                    let buttonGroup = document.createElement("div");
+                    if (CURRENT_USER_TYPE !== 'manager') return;
+
+                    const buttonGroup = document.createElement("div");
                     buttonGroup.className = "button-group";
 
-                    // Tạo nút "Duyệt"
-                    let approveButton = document.createElement("button");
+                    const approveButton = document.createElement("button");
                     approveButton.textContent = "Duyệt";
                     approveButton.className = "approve-btn";
 
-                    // Tạo nút "Hủy"
-                    let cancelButton = document.createElement("button");
+                    const cancelButton = document.createElement("button");
                     cancelButton.textContent = "Hủy";
                     cancelButton.className = "cancel-btn";
+
+                    const requestId = row.getAttribute("data-request-id");
+                    cancelButton.dataset.requestId = requestId;
+
+                    // ✅ Gắn sự kiện chuyển trang duyệt
+                    approveButton.addEventListener('click', () => {
+                        window.location.href = `/approval_system/public/requests/approve/${requestId}`;
+                    });
+
+                    // ✅ Gắn sự kiện mở popup hủy
+                    cancelButton.addEventListener('click', () => {
+                        openCancelPopup(requestId);
+                    });
 
                     buttonGroup.appendChild(approveButton);
                     buttonGroup.appendChild(cancelButton);
 
-                    descriptionCell.innerHTML = oldContent; 
+                    descriptionCell.innerHTML = oldContent;
                     descriptionCell.appendChild(buttonGroup);
                 }
             });
         });
+
+        // 👉 Sự kiện mở popup confirm khi bấm Hủy
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('cancel-btn')) {
+                const requestId = e.target.dataset.requestId;
+                openCancelPopup(requestId); // Gọi đúng hàm đã định nghĩa trong popup_cancel.php
+            }
+        });
+
+        approveButton.addEventListener('click', () => {
+            window.location.href = `/approval_system/public/requests/approve/${requestId}`;
+        });
+
+        function changePage(page) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('page', page);
+            window.location.href = url.toString();
+        }
+
+        document.querySelector('.add-button').addEventListener('click', function () {
+            window.location.href = '/approval_system/public/requests/create';
+        });
+
+        const searchInput = document.querySelector('.user-input');
+        const searchForm = searchInput?.closest('form');
+        let previousValue = searchInput?.value.trim() || '';
+
+        // Khi người dùng gõ vào input
+        searchInput?.addEventListener('input', function () {
+            const currentValue = this.value.trim();
+
+            // Nếu xóa hết nội dung thì submit lại form (tự động reload danh sách gốc)
+            if (previousValue !== '' && currentValue === '') {
+                localStorage.setItem('refocusSearch', 'true');
+                searchForm?.submit();
+            }
+
+            previousValue = currentValue;
+        });
+
+        // Sau khi reload trang → refocus lại input nếu có flag
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('refocusSearch') === 'true') {
+                searchInput?.focus();
+                localStorage.removeItem('refocusSearch');
+            }
+        });
+                
     </script>
+    
 </body>
 </html>

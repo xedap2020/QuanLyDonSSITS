@@ -32,8 +32,8 @@
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         position: relative;
         box-sizing: border-box;
-        border-radius: 6px; /* ✅ Thêm bo góc để khớp với header */
-        overflow: hidden;   /* ✅ Ngăn header tràn ra ngoài */
+        border-radius: 6px; 
+        overflow: hidden;   
     }
 
     .popup-confirm-header {
@@ -43,8 +43,8 @@
         display: flex;
         align-items: center;
         padding-left: 37px;
-        border-top-left-radius: 6px;   /* ✅ Bo góc trái */
-        border-top-right-radius: 6px;  /* ✅ Bo góc phải */
+        border-top-left-radius: 6px;   
+        border-top-right-radius: 6px;  
     }
 
     .popup-header-text {

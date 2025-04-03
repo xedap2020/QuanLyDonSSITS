@@ -2,9 +2,8 @@
 
 class User
 {
-    // ============================
-    // 🔍 Truy vấn theo điều kiện
-    // ============================
+
+    // Truy vấn theo điều kiện
 
     public static function findByUsername($username)
     {
@@ -68,9 +67,7 @@ class User
         return $stmt->fetchColumn();
     }
 
-    // ============================
-    // 📋 Danh sách / Phân trang
-    // ============================
+    // Danh sách / Phân trang
 
     public static function all()
     {
@@ -100,9 +97,7 @@ class User
         return $db->query("SELECT COUNT(*) FROM users")->fetchColumn();
     }
 
-    // ============================
-    // ❌ Xóa mềm (soft delete)
-    // ============================
+    //  Xóa mềm (soft delete)
 
     public static function softDelete($id)
     {

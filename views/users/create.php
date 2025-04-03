@@ -307,12 +307,9 @@
             document.querySelectorAll('.error-message').forEach(msg => msg.textContent = '');
         });
 
-        // Xử lý nút "Tiếp theo"
-        
-        document.querySelector('.next-btn').addEventListener('click', async function (e) {
+        document.querySelector('.next-btn').addEventListener('click', function (e) {
             e.preventDefault();
 
-            // Reset lỗi
             document.querySelectorAll('.error-message').forEach(msg => msg.textContent = '');
             document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
 
@@ -334,9 +331,10 @@
                 {
                     id: 'password',
                     name: 'Mật khẩu',
-                    validate: value => value.length >= 6,
-                    message: 'Mật khẩu phải từ 6 ký tự trở lên'
+                    validate: value => /^(?=.*[A-Z])(?=.*[\W_]).{8,}$/.test(value),
+                    message: 'Mật khẩu phải từ 8 ký tự trở lên, có ít nhất 1 ký tự viết hoa và 1 ký tự đặc biệt'
                 },
+
                 {
                     id: 'email',
                     name: 'Email',
@@ -369,7 +367,6 @@
                 }
             ];
 
-            // Kiểm tra từng trường
             for (const rule of rules) {
                 const field = document.getElementById(rule.id);
                 const errorEl = document.getElementById(rule.id + '-error');
@@ -380,30 +377,11 @@
                 }
             }
 
-            // 👇 Kiểm tra trùng username bằng AJAX
-            const username = document.getElementById('username').value.trim();
-            const usernameErrorEl = document.getElementById('username-error');
-            if (username !== '') {
-                try {
-                    const res = await fetch(`/approval_system/public/users/check-username?username=${encodeURIComponent(username)}`);
-                    const data = await res.json();
-                    if (data.exists) {
-                        isValid = false;
-                        const field = document.getElementById('username');
-                        field.classList.add('input-error');
-                        usernameErrorEl.textContent = 'Tên đăng nhập đã tồn tại';
-                    }
-                } catch (err) {
-                    console.error('Lỗi kiểm tra username:', err);
-                }
-            }
-
             if (!isValid) return;
 
-            // Submit nếu hợp lệ
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/approval_system/public/users/confirm';
+            form.action = '/approval_system/public/users/confirm'; // ✅ sửa đúng URL
 
             rules.forEach(rule => {
                 const input = document.getElementById(rule.id);
@@ -421,6 +399,8 @@
             document.body.appendChild(form);
             form.submit();
         });
+
     </script>
+
 </body>
 </html>

@@ -57,12 +57,12 @@
         }
 
         .frame-1 { top: 171px; left: 389px; }
-        .frame-2 { top: 233px; left: 389px; }
-        .frame-3 { top: 295px; left: 389px; }
-        .frame-4 { top: 357px; left: 389px; }
-        .frame-5 { top: 419px; left: 389px; }
-        .frame-6 { top: 481px; left: 389px; }
-        .frame-7 { top: 543px; left: 389px; }
+        .frame-2 { top: 240px; left: 389px; }
+        .frame-3 { top: 309px; left: 389px; }
+        .frame-4 { top: 378px; left: 389px; }
+        .frame-5 { top: 447px; left: 389px; }
+        .frame-6 { top: 516px; left: 389px; }
+        .frame-7 { top: 585px; left: 389px; }
 
         .input-container {
             display: flex;
@@ -212,6 +212,19 @@
             background: rgba(223, 223, 223, 0.5); 
         }
 
+        .error-message {
+            color: #bd0101;
+            font-size: 13px;
+            margin-left: 160px;
+            margin-top: 55px;
+            display: block;
+            position: relative;
+        }
+
+        .input-error {
+            border: 1px solid #bd0101 !important;
+        }
+
     </style>
 </head>
 <body>
@@ -242,16 +255,25 @@
                 </div>
                 <input type="text" class="input-text" id="fullname" name="full_name" value="<?= htmlspecialchars($user['full_name']) ?>">
             </div>
+            <div class="error-message" id="fullname-error"></div>
         </div>
 
         <div class="frame frame-3">
             <div class="input-container">
                 <div class="username-container">
-                <span class="username-text">Mật khẩu</span>
-                <span class="required">*</span>
+                    <span class="username-text">Mật khẩu</span>
+                    <span class="required">*</span>
                 </div>
-                <input type="password" class="input-text" id="password" name="password">
+                <input
+                type="password"
+                class="input-text"
+                id="password"
+                name="password"
+                placeholder="Nhập mật khẩu mới nếu muốn đổi"
+                autocomplete="new-password"
+                />
             </div>
+            <div class="error-message" id="password-error"></div>
         </div>
 
         <div class="frame frame-4">
@@ -261,6 +283,7 @@
                 </div>
                 <input type="email" class="input-text" id="email" name="email" value="<?= htmlspecialchars($user['email']) ?>">
             </div>
+            <div class="error-message" id="email-error"></div>
         </div>
 
         <div class="frame frame-5">
@@ -273,6 +296,7 @@
                     <img src="/approval_system/public/assets/icons/calendar.svg" class="date-icon" alt="Date Icon">
                 </div>
             </div>
+            <div class="error-message" id="dob-error"></div>
         </div>
 
         <div class="frame frame-6">
@@ -282,11 +306,13 @@
                 <span class="required">*</span>
                 </div>
                 <select class="input-select" id="userType" name="user_type">
-                <option value="Nhân viên" <?= $user['user_type'] === 'Nhân viên' ? 'selected' : '' ?>>Nhân viên</option>
-                <option value="Quản lý" <?= $user['user_type'] === 'Quản lý' ? 'selected' : '' ?>>Quản lý</option>
-                <option value="Admin" <?= $user['user_type'] === 'Admin' ? 'selected' : '' ?>>Admin</option>
+                    <option value="">-- Chọn loại người dùng --</option>
+                    <option value="user" <?= $user['user_type'] === 'user' ? 'selected' : '' ?>>Nhân viên</option>
+                    <option value="manager" <?= $user['user_type'] === 'manager' ? 'selected' : '' ?>>Quản lý</option>
+                    <option value="admin" <?= $user['user_type'] === 'admin' ? 'selected' : '' ?>>Admin</option>
                 </select>
             </div>
+            <div class="error-message" id="userType-error"></div>
         </div>
 
         <div class="frame frame-7">
@@ -296,11 +322,13 @@
                 <span class="required">*</span>
                 </div>
                 <select class="input-select" id="department" name="department_id">
-                <?php foreach ($departments as $dept): ?>
-                    <option value="<?= $dept['id'] ?>" <?= $dept['id'] == $user['department_id'] ? 'selected' : '' ?>><?= htmlspecialchars($dept['name']) ?></option>
-                <?php endforeach; ?>
+                    <option value="">-- Chọn phòng ban --</option>
+                    <?php foreach ($departments as $dept): ?>
+                        <option value="<?= $dept['id'] ?>" <?= $dept['id'] == $user['department_id'] ? 'selected' : '' ?>><?= htmlspecialchars($dept['name']) ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
+            <div class="error-message" id="department-error"></div>
         </div>
 
         <div class="footer">
@@ -310,10 +338,115 @@
     </form>
 
     <script>
+        // Bấm icon lịch để hiện bộ chọn ngày
         document.querySelector('.date-icon').addEventListener('click', function() {
             document.getElementById('dob').showPicker();
         });
-    </script>
 
+        document.querySelector('.next-btn').addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // Clear lỗi cũ
+            document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+            document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+
+            const fullname = document.getElementById('fullname');
+            const password = document.getElementById('password');
+            const userType = document.getElementById('userType');
+            const department = document.getElementById('department');
+
+            let isValid = true;
+
+            if (!fullname.value.trim()) {
+                fullname.classList.add('input-error');
+                document.getElementById('fullname-error').textContent = 'Vui lòng nhập tên người dùng';
+                fullname.focus();
+                isValid = false;
+            }
+
+            const passwordValue = password.value.trim();
+            const passwordPattern = /^(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$/;
+
+            // Chỉ validate nếu người dùng có nhập mật khẩu
+            if (passwordValue !== '') {
+                if (!passwordPattern.test(passwordValue)) {
+                    password.classList.add('input-error');
+                    document.getElementById('password-error').textContent = 'Mật khẩu phải từ 8 ký tự trở lên, có ít nhất 1 ký tự viết hoa và 1 ký tự đặc biệt';
+                    if (isValid) password.focus();
+                    isValid = false;
+                }
+            }
+
+            if (!userType.value) {
+                userType.classList.add('input-error');
+                document.getElementById('userType-error').textContent = 'Vui lòng chọn loại người dùng';
+                if (isValid) userType.focus();
+                isValid = false;
+            }
+
+            if (!department.value) {
+                department.classList.add('input-error');
+                document.getElementById('department-error').textContent = 'Vui lòng chọn phòng ban';
+                if (isValid) department.focus();
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            // Tạo form ẩn để submit nếu hợp lệ
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/approval_system/public/users/confirm-edit';
+
+            ['fullname', 'password', 'email', 'dob', 'userType', 'department'].forEach(id => {
+                const input = document.getElementById(id);
+                const hidden = document.createElement('input');
+                hidden.type = 'hidden';
+                hidden.name =
+                    id === 'fullname' ? 'full_name' :
+                    id === 'userType' ? 'user_type' :
+                    id === 'department' ? 'department_id' :
+                    id;
+                hidden.value = input.value;
+                form.appendChild(hidden);
+            });
+
+            const usernameHidden = document.createElement('input');
+            usernameHidden.type = 'hidden';
+            usernameHidden.name = 'username';
+            usernameHidden.value = document.getElementById('username').value;
+            form.appendChild(usernameHidden);
+
+            const userIdHidden = document.createElement('input');
+            userIdHidden.type = 'hidden';
+            userIdHidden.name = 'id';
+            userIdHidden.value = <?= $user['id'] ?>;
+            form.appendChild(userIdHidden);
+
+            document.body.appendChild(form);
+            form.submit();
+        });
+                
+        // Xử lý nút "Xóa trống"
+        document.querySelector('.clear-btn').addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const resetFields = ['fullname', 'password', 'email', 'dob', 'userType', 'department'];
+
+            resetFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (el.tagName.toLowerCase() === 'select') {
+                        el.selectedIndex = 0;
+                    } else {
+                        el.value = '';
+                    }
+                }
+            });
+
+            // Xóa lỗi nếu có
+            document.querySelectorAll('.error-text').forEach(el => el.textContent = '');
+        });
+    </script>
 </body>
 </html>

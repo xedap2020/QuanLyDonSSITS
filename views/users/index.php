@@ -404,6 +404,11 @@
             cursor: default;
         }
 
+        .next:disabled {
+            color: rgba(200, 200, 200, 1);
+            cursor: default;
+        }
+
         .pagination-btn.active {
             background: rgba(0, 0, 0, 1);
             color: white;
@@ -517,11 +522,13 @@
         <table class="pagination-table">
             <tr>
                 <td>
-                    <button class="pagination-btn previous" <?= $currentPage <= 1 ? 'disabled' : '' ?> onclick="changePage(<?= $currentPage - 1 ?>)">← Previous</button>
+                    <button class="pagination-btn previous" 
+                        <?= ($currentPage <= 1 || $totalPages <= 1) ? 'disabled' : '' ?> 
+                        onclick="changePage(<?= $currentPage - 1 ?>)">← Previous
+                    </button>
                 </td>
 
                 <?php
-                    // Hiển thị 1, 2, 3, ..., n logic
                     $visiblePages = 3;
                     $start = max(1, $currentPage - 1);
                     $end = min($totalPages, $start + $visiblePages - 1);
@@ -537,14 +544,18 @@
                     }
 
                     if ($end < $totalPages) {
-                        if ($end < $totalPages - 1) 
+                        if ($end < $totalPages - 1) {
                             echo "<td><span class='pagination-dots'>...</span></td>";
-                            echo "<td><button class='pagination-btn' onclick='changePage($totalPages)'>$totalPages</button></td>";
+                        }
+                        echo "<td><button class='pagination-btn' onclick='changePage($totalPages)'>$totalPages</button></td>";
                     }
                 ?>
 
                 <td>
-                    <button class="pagination-btn next" <?= $currentPage >= $totalPages ? 'disabled' : '' ?> onclick="changePage(<?= $currentPage + 1 ?>)">Next →</button>
+                    <button class="pagination-btn next" 
+                        <?= ($currentPage >= $totalPages || $totalPages <= 1) ? 'disabled' : '' ?> 
+                        onclick="changePage(<?= $currentPage + 1 ?>)">Next →
+                    </button>
                 </td>
             </tr>
         </table>
