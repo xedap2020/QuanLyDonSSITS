@@ -136,13 +136,13 @@ class UserController
 
     public function update()
     {
-        $id           = $_POST['id'];
-        $username     = $_POST['username'];
-        $full_name    = $_POST['full_name'];
-        $password     = $_POST['password'];
-        $email        = $_POST['email'];
-        $dob          = $_POST['dob'];
-        $user_type    = $_POST['user_type'];
+        $id            = $_POST['id'];
+        $username      = $_POST['username'];
+        $full_name     = $_POST['full_name'];
+        $password      = $_POST['password'];
+        $email         = $_POST['email'];
+        $dob           = $_POST['dob'];
+        $user_type     = $_POST['user_type'];
         $department_id = $_POST['department_id'];
 
         $pdo = Database::connect();
@@ -150,18 +150,39 @@ class UserController
         try {
             $pdo->beginTransaction();
 
-            $hashedPassword = md5($password);
-
-            $stmt = $pdo->prepare("UPDATE users SET full_name = :full_name, password = :password, email = :email, dob = :dob, user_type = :user_type, department_id = :department_id WHERE id = :id");
-            $stmt->execute([
-                ':full_name'     => $full_name,
-                ':password'      => $hashedPassword,
-                ':email'         => $email,
-                ':dob'           => $dob,
-                ':user_type'     => $user_type,
-                ':department_id' => $department_id,
-                ':id'            => $id
-            ]);
+            if (!empty($password)) {
+                // Nếu có nhập mật khẩu mới thì cập nhật
+                $hashedPassword = md5($password);
+                $stmt = $pdo->prepare("
+                    UPDATE users 
+                    SET full_name = :full_name, password = :password, email = :email, dob = :dob, user_type = :user_type, department_id = :department_id 
+                    WHERE id = :id
+                ");
+                $stmt->execute([
+                    ':full_name'     => $full_name,
+                    ':password'      => $hashedPassword,
+                    ':email'         => $email,
+                    ':dob'           => $dob,
+                    ':user_type'     => $user_type,
+                    ':department_id' => $department_id,
+                    ':id'            => $id
+                ]);
+            } else {
+                // Nếu không nhập mật khẩu thì giữ nguyên mật khẩu cũ
+                $stmt = $pdo->prepare("
+                    UPDATE users 
+                    SET full_name = :full_name, email = :email, dob = :dob, user_type = :user_type, department_id = :department_id 
+                    WHERE id = :id
+                ");
+                $stmt->execute([
+                    ':full_name'     => $full_name,
+                    ':email'         => $email,
+                    ':dob'           => $dob,
+                    ':user_type'     => $user_type,
+                    ':department_id' => $department_id,
+                    ':id'            => $id
+                ]);
+            }
 
             $pdo->commit();
 

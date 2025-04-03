@@ -262,7 +262,6 @@
             <div class="input-container">
                 <div class="username-container">
                     <span class="username-text">Mật khẩu</span>
-                    <span class="required">*</span>
                 </div>
                 <input
                 type="password"

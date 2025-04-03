@@ -220,8 +220,9 @@
     <div class="new-order-text">Duyệt đơn</div>
 
     <?php include_once __DIR__ . '/../components/popup_confirm.php'; ?>
+    <?php include_once __DIR__ . '/../components/popup_cancel.php'; ?>
 
-    <form method="POST" action="/approval_system/public/requests/approve">
+    <form id="approveForm" method="POST" action="/approval_system/public/requests/approve">
         <input type="hidden" name="request_id" value="<?= $request['id'] ?>">
 
         <div class="frame-1">
@@ -260,15 +261,21 @@
         <div class="frame-6">
             <div class="title-text">Đính kèm</div>
             <?php if (!empty($request['attached_file'])): ?>
-                <a href="/approval_system/uploads/<?= htmlspecialchars($request['attached_file']) ?>" target="_blank">
-                    <?= htmlspecialchars($request['attached_file']) ?>
+                <a href="/approval_system/uploads/<?= htmlspecialchars($request['attached_file']) ?>" target="_blank" style="text-decoration: none;">
+                    <input type="text" class="input-text-1"
+                        value="<?= htmlspecialchars($request['attached_file']) ?>"
+                        readonly
+                        style="border: none; background: none; cursor: pointer; outline: none;">
                 </a>
+            <?php else: ?>
+                <input type="text" class="input-text-1" value="Không có file đính kèm" readonly 
+                    style="background: rgba(204, 204, 204, 0.5);">
             <?php endif; ?>
         </div>
 
         <div class="footer">
             <button type="button" class="next-btn" id="btn-approve">Duyệt đơn</button>
-            <button type="button" class="clear-btn" onclick="window.history.back()">Hủy đơn</button>
+            <button type="button" class="clear-btn" onclick="openCancelPopup(<?= $request['id'] ?>)">Hủy đơn</button>
         </div>
     </form>
 

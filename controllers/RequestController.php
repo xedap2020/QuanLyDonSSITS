@@ -88,25 +88,13 @@ class RequestController
         $type        = $_POST['type'] ?? '';
         $startDate   = $_POST['start_date'] ?? '';
         $endDate     = $_POST['end_date'] ?? '';
-        $fileName    = null;
+        $fileName    = $_POST['attached_file'] ?? null;
 
         $db = Database::connect();
 
         try {
             $db->beginTransaction();
-
-            // Xử lý upload file nếu có
-            if (isset($_FILES['attached_file']) && $_FILES['attached_file']['error'] === UPLOAD_ERR_OK) {
-                $uploadDir = __DIR__ . '/../uploads/';
-                if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
-
-                $originalName = $_FILES['attached_file']['name'];
-                $fileTmp      = $_FILES['attached_file']['tmp_name'];
-                $ext          = pathinfo($originalName, PATHINFO_EXTENSION);
-                $fileName     = uniqid('file_') . '.' . $ext;
-                move_uploaded_file($fileTmp, $uploadDir . $fileName);
-            }
-
+    
             $stmt = $db->prepare("INSERT INTO requests (user_id, approver_id, title, description, type, start_date, end_date, attached_file)
                                   VALUES (:user_id, :approver_id, :title, :description, :type, :start_date, :end_date, :attached_file)");
             $stmt->execute([
@@ -120,8 +108,19 @@ class RequestController
                 ':attached_file' => $fileName
             ]);
 
-            $db->commit();
+            // Gửi mail cho người duyệt
+            $stmt = $db->prepare("SELECT email FROM users WHERE id = ?");
+            $stmt->execute([$approverId]);
+            $approverEmail = $stmt->fetchColumn();
 
+            require_once __DIR__ . '/../helpers/MailHelper.php';
+            MailHelper::send(
+                $approverEmail,
+                "Bạn có đơn cần duyệt",
+                "Bạn có đơn mới từ {$currentUser['full_name']}. Vui lòng đăng nhập hệ thống để xử lý."
+            );
+    
+            $db->commit();
             header("Location: /approval_system/public/requests");
             exit;
         } catch (Exception $e) {
@@ -157,6 +156,18 @@ class RequestController
                 ':reason' => $reason,
                 ':id'     => $requestId
             ]);
+
+            // Gửi mail cho người tạo đơn
+            $stmt = $db->prepare("SELECT u.email, u.full_name FROM users u JOIN requests r ON u.id = r.user_id WHERE r.id = ?");
+            $stmt->execute([$requestId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            require_once __DIR__ . '/../helpers/MailHelper.php';
+            MailHelper::send(
+                $user['email'],
+                "Đơn của bạn Đã bị hủy",
+                "Xin chào {$user['full_name']},<br>Đơn của bạn đã bị hủy. Vui lòng kiểm tra hệ thống để biết thêm chi tiết."
+            );
 
             $db->commit();
             header("Location: /approval_system/public/requests");
@@ -209,6 +220,18 @@ class RequestController
     
             $stmt = $db->prepare("UPDATE requests SET status = 'approved', approved_at = NOW() WHERE id = ?");
             $stmt->execute([$requestId]);
+
+            // Gửi mail cho người tạo đơn
+            $stmt = $db->prepare("SELECT u.email, u.full_name FROM users u JOIN requests r ON u.id = r.user_id WHERE r.id = ?");
+            $stmt->execute([$requestId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            require_once __DIR__ . '/../helpers/MailHelper.php';
+            MailHelper::send(
+                $user['email'],
+                "Đơn của bạn Đã được duyệt",
+                "Xin chào {$user['full_name']},<br>Đơn của bạn đã được duyệt. Vui lòng kiểm tra hệ thống để biết thêm chi tiết."
+            );
     
             $db->commit();
     

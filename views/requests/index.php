@@ -530,6 +530,11 @@
                     descriptionCell.appendChild(buttonGroup);
                 }
             });
+
+            approveButton.addEventListener('click', () => {
+                window.location.href = `/approval_system/public/requests/approve/${requestId}`;
+            });
+
         });
 
         // 👉 Sự kiện mở popup confirm khi bấm Hủy
@@ -538,10 +543,6 @@
                 const requestId = e.target.dataset.requestId;
                 openCancelPopup(requestId); // Gọi đúng hàm đã định nghĩa trong popup_cancel.php
             }
-        });
-
-        approveButton.addEventListener('click', () => {
-            window.location.href = `/approval_system/public/requests/approve/${requestId}`;
         });
 
         function changePage(page) {

@@ -2,7 +2,7 @@
 <div id="popup-cancel-overlay" style="display:none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
      background: rgba(0,0,0,0.3); z-index: 9999; justify-content: center; align-items: center;">
 
-    <form action="/approval_system/public/requests/cancel" method="POST" id="cancel-form" class="popup-cancel-body">
+    <form action="/approval_system/public/requests/cancel" method="POST" id="cancel-form" class="popup-cancel-body" onsubmit="return validateCancelReason()">
         <div class="popup-cancel-header">
             <span class="popup-cancel-header-text">Thông báo</span>
         </div>

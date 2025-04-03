@@ -366,6 +366,7 @@ $typeText = $typeMap[$data['type'] ?? ''] ?? 'Không xác định';
 
             <div class="input-file-wrapper">
                 <div class="input-file-name"><?= htmlspecialchars($data['attached_file'] ?? 'Không có') ?></div>
+                <input type="hidden" name="attached_file" value="<?= htmlspecialchars($data['attached_file'] ?? '') ?>">
                 <div class="icon-file-wrapper">
                     <img src="/approval_system/public/assets/icons/upload-icon.svg" alt="Upload Icon" class="upload-icon">
                 </div>
